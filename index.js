@@ -11,19 +11,7 @@ const date = new Date();
 const fs = require('fs');
 
 app.use(bodyParser.json());
-/*
-fs.appendFile('usersDB.json', '{},\n', (err) => {
-    if (err) {
-        throw err;
-    }
-})
 
-fs.appendFile('listingsDB.json', '{},\n', (err) => {
-    if (err) {
-        throw err;
-    }
-})
-*/
 fs.readFile('usersDB.json', 'utf8', (err, usersData) => {
     if (err) {
         throw err;
@@ -43,34 +31,6 @@ fs.readFile('listingsDB.json', 'utf8', (err, listingsData) => {
 const users = [];
 const listings = [];
 
-/*
-app.use((req, res, next) => {
-    console.log('Hello, this is middleware.');
-    next();
-})
-*/
-
-/*
-function demoMiddleware(req, res, next) {
-    console.log('This is a demo middleware');
-    next();
-}
-*/
-
-
-function apiKeySecurity(req, res, next) {
-    if(req.get('my-api-key') == 12345) {
-        console.log('API-key valid');
-        next();
-    }
-    else {
-        console.log('API-KEY not valid');
-        res.sendStatus(401)
-    }
-}
-
-
-
 app.post('/users', (req, res) => {
     //Create new user
 
@@ -88,7 +48,7 @@ app.post('/users', (req, res) => {
     const uniqueUserId = uuidv4();
     const findUser = users.find(u => u.id === (req.params.userName));
 
-    if(findUser != undefined) {
+    if(findUser === undefined) {
         const newUser = {
             userId: uniqueUserId,
             userName: req.body.userName,
@@ -177,31 +137,6 @@ app.get('/listings/:itemTitle', (req, res) => {
     res.send(listings[listings.itemTitle]);
     console.log('fetches list of items on server');
 })
-/*
-app.get('/dogs', demoMiddleware, (req, res) => {
-    //res.send('hello dogg');
-    console.log('This gets dogs');
-    res.send(dogs);
-})
-*/
-
-/*
-app.get('/dogs/:id', apiKeySecurity, (req, res) => {
-    const dog = dogs.find(d => d.id === (req.params.id));
-    if(dog === undefined) {
-        res.sendStatus(404);
-    } else {
-        res.json(dog);
-    }
-})
-*/
-
-/*
-app.post('/dogs', (req, res) => {
-    dogs.push({ id: uuidv4(), name:req.body.name })
-    res.sendStatus(201);
-});
-*/
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
