@@ -1,0 +1,799 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "BCI-model",
+    "version": "1.0",
+    "description": "BCI-exercise model"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "BCI-EXERCISE"
+    }
+  ],
+  "paths": {
+    "/users/{userId}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "integer"
+          },
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "description": "Id of an existing user."
+        }
+      ],
+      "get": {
+        "summary": "Get User Info by User ID",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "User Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                },
+                "examples": {
+                  "Get User Alice Smith": {
+                    "value": {
+                      "id": 142,
+                      "firstName": "Alice",
+                      "lastName": "Smith",
+                      "email": "alice.smith@gmail.com",
+                      "dateOfBirth": "1997-10-31",
+                      "emailVerified": true,
+                      "signUpDate": "2019-08-24"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User Not Found"
+          }
+        },
+        "operationId": "get-users-userId",
+        "description": "Retrieve the information of the user with the matching user ID."
+      },
+      "patch": {
+        "summary": "Update User Information",
+        "operationId": "patch-users-userId",
+        "responses": {
+          "200": {
+            "description": "User Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                },
+                "examples": {
+                  "Updated User Rebecca Baker": {
+                    "value": {
+                      "id": 13,
+                      "firstName": "Rebecca",
+                      "lastName": "Baker",
+                      "email": "rebecca@gmail.com",
+                      "dateOfBirth": "1985-10-02",
+                      "emailVerified": false,
+                      "createDate": "2019-08-24"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User Not Found"
+          },
+          "409": {
+            "description": "Email Already Taken"
+          }
+        },
+        "description": "Update the information of an existing user.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "If a new email is given, the user's email verified property will be set to false."
+                  },
+                  "dateOfBirth": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "Update First Name": {
+                  "value": {
+                    "firstName": "Rebecca"
+                  }
+                },
+                "Update Email": {
+                  "value": {
+                    "email": "rebecca@gmail.com"
+                  }
+                },
+                "Update Last Name & Date of Birth": {
+                  "value": {
+                    "lastName": "Baker",
+                    "dateOfBirth": "1985-10-02"
+                  }
+                }
+              }
+            }
+          },
+          "description": "Patch user properties to update."
+        }
+      },
+      "delete": {
+        "summary": "",
+        "operationId": "delete-users-userId",
+        "responses": {}
+      }
+    },
+    "/user": {
+      "post": {
+        "summary": "Create New User",
+        "operationId": "post-user",
+        "responses": {
+          "200": {
+            "description": "User Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                },
+                "examples": {
+                  "New User Bob Fellow": {
+                    "value": {
+                      "id": 12,
+                      "firstName": "Bob",
+                      "lastName": "Fellow",
+                      "email": "bob.fellow@gmail.com",
+                      "dateOfBirth": "1996-08-24",
+                      "emailVerified": false,
+                      "createDate": "2020-11-18"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing Required Information"
+          },
+          "409": {
+            "description": "Email Already Taken"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "userName": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "firstName",
+                  "lastName",
+                  "email"
+                ]
+              },
+              "examples": {
+                "Create User Bob Fellow": {
+                  "value": {
+                    "firstName": "Bob",
+                    "lastName": "Fellow",
+                    "email": "bob.fellow@gmail.com",
+                    "dateOfBirth": "1996-08-24"
+                  }
+                }
+              }
+            }
+          },
+          "description": "Post the necessary fields for the API to create a new user."
+        },
+        "description": "Create a new user."
+      }
+    },
+    "/users/{userId}/items": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "userId",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "post": {
+        "summary": "Create new listing for user",
+        "operationId": "post-users-userId-items",
+        "responses": {
+          "201": {
+            "description": "Item added.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/itemModel"
+                },
+                "examples": {
+                  "New Listed item for User": {
+                    "value": {
+                      "itemId": 0,
+                      "itemTitle": "Acer Laptop",
+                      "itemDescription": "An old laptop. Works.",
+                      "itemCategory": {
+                        "categoryClothes": false,
+                        "categoryVehicles": false,
+                        "categoryElectrics": false,
+                        "categoryFurnitures": false,
+                        "categoryOther": true
+                      },
+                      "itemLocation": {
+                        "itemLocationCounty": "Pohjois-pohjanmaa",
+                        "itemLocationCity": "Oulu"
+                      },
+                      "itemImages": {
+                        "itemImage0": "string",
+                        "itemImage1": "string",
+                        "itemImage2": "string",
+                        "itemImage3": "string"
+                      },
+                      "itemPrice": 49.99,
+                      "itemPostingDate": "20-OCT-2021-08:03",
+                      "itemPostingDateHR": "20. October 2021 8:03",
+                      "itemDeliveryType": {
+                        "typeShipping": true,
+                        "typePickup": true
+                      },
+                      "itemUserInfo": {
+                        "id": 142,
+                        "firstName": "Alice",
+                        "lastName": "Smith",
+                        "email": "alice.smith@gmail.com",
+                        "dateOfBirth": "1997-10-31",
+                        "emailVerified": true,
+                        "signUpDate": "2019-08-24"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing required information"
+          }
+        },
+        "description": "Add one item to user's listings",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "itemId": {
+                    "type": "number"
+                  },
+                  "itemTitle": {
+                    "type": "string"
+                  },
+                  "itemDescription": {
+                    "type": "string"
+                  },
+                  "itemCategory": {
+                    "type": "string"
+                  },
+                  "itemLocation": {
+                    "type": "string"
+                  },
+                  "itemImages": {
+                    "type": "string"
+                  },
+                  "itemPrice": {
+                    "type": "number"
+                  },
+                  "itemDeliveryType": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "itemTitle",
+                  "itemDescription",
+                  "itemLocation",
+                  "itemImages",
+                  "itemPrice",
+                  "itemDeliveryType"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "description": "Post the necessary fields for the API to create a new listing for user."
+        }
+      }
+    },
+    "/users/{userId}/items/{itemId}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "userId",
+          "in": "path",
+          "required": true
+        },
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "itemId",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "get": {
+        "summary": "Get user's listed item by",
+        "tags": [],
+        "responses": {},
+        "operationId": "get-users-userId-items-itemId",
+        "description": ""
+      },
+      "patch": {
+        "summary": "Update item listing",
+        "operationId": "patch-users-userId-items-itemId",
+        "responses": {
+          "200": {
+            "description": "Listing updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/itemModel"
+                },
+                "examples": {
+                  "Updated user Listing": {
+                    "value": {
+                      "itemId": 0,
+                      "itemTitle": "Acer Laptop",
+                      "itemDescription": "An old laptop. Works.",
+                      "itemCategory": {
+                        "categoryClothes": false,
+                        "categoryVehicles": false,
+                        "categoryElectrics": false,
+                        "categoryFurnitures": false,
+                        "categoryOther": true
+                      },
+                      "itemLocation": {
+                        "itemLocationCounty": "Pohjois-pohjanmaa",
+                        "itemLocationCity": "Oulu"
+                      },
+                      "itemImages": {
+                        "itemImage0": "string",
+                        "itemImage1": "string",
+                        "itemImage2": "string",
+                        "itemImage3": "string"
+                      },
+                      "itemPrice": 49.99,
+                      "itemPostingDate": "20-OCT-2021-08:03",
+                      "itemPostingDateHR": "20. October 2021 8:03",
+                      "itemDeliveryType": {
+                        "typeShipping": true,
+                        "typePickup": true
+                      },
+                      "itemUserInfo": {
+                        "id": 142,
+                        "firstName": "Alice",
+                        "lastName": "Smith",
+                        "email": "alice.smith@gmail.com",
+                        "dateOfBirth": "1997-10-31",
+                        "emailVerified": true,
+                        "signUpDate": "2019-08-24"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Listing not found"
+          }
+        },
+        "description": "Update the information about an item listing",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "itemTitle": {
+                    "type": "string"
+                  },
+                  "itemDescription": {
+                    "type": "string"
+                  },
+                  "itemCategory": {
+                    "type": "string"
+                  },
+                  "itemLocation": {
+                    "type": "string"
+                  },
+                  "itemImages": {
+                    "type": "string"
+                  },
+                  "itemPrice": {
+                    "type": "number"
+                  },
+                  "itemDeliveryType": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "Updated Item Title": {
+                  "value": {
+                    "itemTitle": "HP laptop"
+                  }
+                }
+              }
+            }
+          },
+          "description": "Patch item listing properties to update listing"
+        }
+      }
+    },
+    "/listings/{itemId}": {
+      "get": {
+        "summary": "Get item listings on server",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Listing found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/itemModel"
+                },
+                "examples": {
+                  "Get Listing Acer Laptop": {
+                    "value": {
+                      "itemId": 0,
+                      "itemTitle": "Acer Laptop",
+                      "itemDescription": "An old laptop. Works.",
+                      "itemCategory": {
+                        "categoryClothes": false,
+                        "categoryVehicles": false,
+                        "categoryElectrics": false,
+                        "categoryFurnitures": false,
+                        "categoryOther": true
+                      },
+                      "itemLocation": {
+                        "itemLocationCounty": "Pohjois-pohjanmaa",
+                        "itemLocationCity": "Oulu"
+                      },
+                      "itemImages": {
+                        "itemImage0": "string",
+                        "itemImage1": "string",
+                        "itemImage2": "string",
+                        "itemImage3": "string"
+                      },
+                      "itemPrice": 49.99,
+                      "itemPostingDate": "20-OCT-2021-08:03",
+                      "itemPostingDateHR": "20. October 2021 8:03",
+                      "itemDeliveryType": {
+                        "typeShipping": true,
+                        "typePickup": true
+                      },
+                      "itemUserInfo": {
+                        "id": 142,
+                        "firstName": "Alice",
+                        "lastName": "Smith",
+                        "email": "alice.smith@gmail.com",
+                        "dateOfBirth": "1997-10-31",
+                        "emailVerified": true,
+                        "signUpDate": "2019-08-24"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Listing not found"
+          }
+        },
+        "operationId": "get-listings",
+        "description": "get listings on the server",
+        "parameters": []
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "itemId",
+          "in": "path",
+          "required": true
+        }
+      ]
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "title": "User",
+        "type": "object",
+        "description": "",
+        "examples": [
+          {
+            "id": 142,
+            "firstName": "Alice",
+            "lastName": "Smith",
+            "email": "alice.smith@gmail.com",
+            "dateOfBirth": "1997-10-31",
+            "emailVerified": true,
+            "signUpDate": "2019-08-24"
+          }
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique identifier for the given user."
+          },
+          "userName": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "040 123 4567"
+          },
+          "emailVerified": {
+            "type": "boolean",
+            "description": "Set to true if the user's email has been verified."
+          },
+          "createDate": {
+            "type": "string",
+            "format": "date",
+            "description": "The date that the user was created."
+          }
+        },
+        "required": [
+          "id",
+          "firstName",
+          "lastName",
+          "email",
+          "emailVerified"
+        ]
+      },
+      "itemModel": {
+        "title": "itemModel",
+        "type": "object",
+        "description": "Properties of an item",
+        "examples": [
+          {
+            "itemId": 0,
+            "itemTitle": "Acer Laptop",
+            "itemDescription": "An old laptop. Works.",
+            "itemCategory": {
+              "categoryClothes": false,
+              "categoryVehicles": false,
+              "categoryElectrics": false,
+              "categoryFurnitures": false,
+              "categoryOther": true
+            },
+            "itemLocation": {
+              "itemLocationCounty": "Pohjois-pohjanmaa",
+              "itemLocationCity": "Oulu"
+            },
+            "itemImages": {
+              "itemImage0": "string",
+              "itemImage1": "string",
+              "itemImage2": "string",
+              "itemImage3": "string"
+            },
+            "itemPrice": 49.99,
+            "itemPostingDate": "20-OCT-2021-08:03",
+            "itemPostingDateHR": "20. October 2021 8:03",
+            "itemDeliveryType": {
+              "typeShipping": true,
+              "typePickup": true
+            },
+            "itemUserInfo": {
+              "id": 142,
+              "firstName": "Alice",
+              "lastName": "Smith",
+              "email": "alice.smith@gmail.com",
+              "dateOfBirth": "1997-10-31",
+              "emailVerified": true,
+              "signUpDate": "2019-08-24"
+            }
+          }
+        ],
+        "properties": {
+          "itemId": {
+            "type": "number",
+            "description": "Unique item identifier for listed item"
+          },
+          "itemTitle": {
+            "type": "string",
+            "example": "Acer Laptop",
+            "description": "Human readable title for listed item"
+          },
+          "itemDescription": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 0,
+            "example": "An old laptop. Works.",
+            "description": "Human readable descriptive name for listed item"
+          },
+          "itemCategory": {
+            "$ref": "#/components/schemas/itemCategory"
+          },
+          "itemLocation": {
+            "$ref": "#/components/schemas/itemLocation"
+          },
+          "itemImages": {
+            "$ref": "#/components/schemas/ItemImages"
+          },
+          "itemPrice": {
+            "type": "number",
+            "description": "Price of listed item in number form",
+            "example": 49.99
+          },
+          "itemPostingDate": {
+            "type": "string",
+            "description": "Machine-readable date for when item was listed",
+            "example": "20-OCT-2021-08:03"
+          },
+          "itemPostingDateHR": {
+            "type": "string",
+            "description": "Human readable date for when item was listed",
+            "example": "20. October 2021 8:03"
+          },
+          "itemDeliveryType": {
+            "$ref": "#/components/schemas/itemDeliveryType"
+          },
+          "itemUserInfo": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "required": [
+          "itemId",
+          "itemTitle",
+          "itemDescription",
+          "itemCategory",
+          "itemLocation",
+          "itemImages",
+          "itemPrice",
+          "itemDeliveryType",
+          "itemUserInfo"
+        ]
+      },
+      "itemCategory": {
+        "title": "itemCategory",
+        "type": "object",
+        "description": "Checks item's category type",
+        "properties": {
+          "categoryClothes": {
+            "type": "boolean",
+            "description": "Categorizes item into clothing",
+            "default": false
+          },
+          "categoryVehicles": {
+            "type": "boolean",
+            "description": "Categorizes item into vehicles",
+            "default": false
+          },
+          "categoryElectrics": {
+            "type": "boolean",
+            "description": "Categorizes item into electrics",
+            "default": false
+          },
+          "categoryFurnitures": {
+            "type": "boolean",
+            "description": "Categorizes item into furniture",
+            "default": false
+          },
+          "categoryOther": {
+            "type": "boolean",
+            "description": "Categorizes item into other type",
+            "default": true
+          }
+        }
+      },
+      "itemLocation": {
+        "title": "itemLocation",
+        "type": "object",
+        "properties": {
+          "itemLocationCounty": {
+            "type": "string",
+            "example": "Pohjois-pohjanmaa"
+          },
+          "itemLocationCity": {
+            "type": "string",
+            "example": "Oulu"
+          }
+        }
+      },
+      "itemDeliveryType": {
+        "title": "itemDeliveryType",
+        "type": "object",
+        "properties": {
+          "typeShipping": {
+            "type": "boolean"
+          },
+          "typePickup": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ItemImages": {
+        "type": "object",
+        "title": "ItemImages",
+        "maxProperties": 4,
+        "minProperties": 0,
+        "properties": {
+          "itemImage0": {
+            "type": "string"
+          },
+          "itemImage1": {
+            "type": "string"
+          },
+          "itemImage2": {
+            "type": "string"
+          },
+          "itemImage3": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {}
+  }
+}
